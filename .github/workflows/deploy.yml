@@ -11,8 +11,9 @@ jobs:
       - name: Hello World step
         run: echo "Hello, World!"
 
-  secound_jobs:
+  second_jobs:
+    needs: first_jobs
     runs-on: ubuntu-latest
     steps:
       - name: Hello World step
-        run: echo "Hello, World!"
+        run: echo "Hello, Second World!"
