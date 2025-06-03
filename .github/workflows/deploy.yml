@@ -10,3 +10,9 @@ jobs:
     steps:
       - name: Hello World step
         run: echo "Hello, World!"
+
+  secound_jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World step
+        run: echo "Hello, World!"
