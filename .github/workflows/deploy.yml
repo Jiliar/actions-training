@@ -1,0 +1,12 @@
+name: Deploy to server
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  first_jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World step
+        run: echo "Hello, World!"
