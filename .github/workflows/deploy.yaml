@@ -3,7 +3,7 @@ name: "Deploy - Training"
 on:
   push:
     branches:
-      - main
+      - main-exercise-1
 
 jobs:
   deploy-training:
