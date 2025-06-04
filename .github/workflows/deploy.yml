@@ -1,17 +1,25 @@
 name: Deploy to server
-on:
+on: # Init event
   push:
     branches:
       - main
 
-jobs:
+jobs:  # Define jobs
   first_jobs:
     runs-on: ubuntu-latest
-    steps:
+    steps: # Define steps
       - name: Hello World step
         run: echo "Hello, World!"
 
   second_jobs:
+    needs: first_jobs #Create a dependency on the first job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World step
+        run: echo "Hello, Second World!"
+
+  third_jobs: # This job will not run if the condition if is false
+    if: ${{ github.ref == 'refs/heads/main' }}  # Check if the branch is main
     needs: first_jobs
     runs-on: ubuntu-latest
     steps:
