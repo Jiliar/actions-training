@@ -5,26 +5,53 @@ on: # Init event
       - main
 
 jobs:  # Define jobs
-  first_jobs:
+  first_job:
     runs-on: ubuntu-latest
     steps: # Define steps
       - name: Hello World step
         run: echo "Hello, World!"
+      - name: Worning on Dir
+        run: echo "first_job = First Job!" >> $GITHUB_OUTPUT # Set an output variable
 
-  second_jobs:
-    needs: first_jobs #Create a dependency on the first job
+
+  second_job:
+    needs: first_job #Create a dependency on the first job
     runs-on: ubuntu-latest
     steps:
       - name: Hello World step
         run: echo "Hello, Second World!"
+      - name: Worning on Dir
+        run: echo "second_job = Second Job!" >> $GITHUB_OUTPUT # Set an output variable
 
-  third_jobs: # This job will not run if the condition if is false
+  third_job: # This job will not run if the condition if is false
     if: ${{ github.ref == 'refs/heads/main' }}  # Check if the branch is main
-    needs: first_jobs
+    needs: first_job
     runs-on: ubuntu-latest
     steps: # Two ways to create actions
       - name: Working directory
+        shell: bash # Define the shell to use
         run: ls -sl
+    
+      - name: Worning on Dir
+        run: echo "third_job = Third Job!" >> $GITHUB_OUTPUT # Set an output variable
 
       - name: Action
         uses: actions/checkout@v4
+        with: #Define inputs or parameters
+            fetch-depth: 0  # Fetch all history for all branches and tags
+
+    #Share information between jobs
+  fourth_job:
+    needs: [first_job, second_job, third_job]  # Create a dependency on the first job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World step
+        run: echo "Hello, Fourth World!"
+      - name: Print environment variables
+        run: printenv  # Print all environment variables
+      - name: Print output variable - First Job
+        run: echo "first_job = ${{ steps.first_job.output }}" # Access output variables from the first job
+      - name: Print output variable - Second Job
+        run: echo "second_job = ${{ steps.second_job.output }}" # Access output variables from the second job
+      - name: Print output variable - Third Job
+        run: echo "third_job = ${{ steps.third_job.output }}" # Access output variables from the third job
