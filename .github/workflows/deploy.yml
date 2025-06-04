@@ -49,3 +49,9 @@ jobs:  # Define jobs
         run: echo "Hello, Fourth World!"
       - name: Print environment variables
         run: printenv  # Print all environment variables
+      - name: Print output variable - First Job
+        run: echo "first_job = ${{ steps.first_job.output }}" # Access output variables from the first job
+      - name: Print output variable - Second Job
+        run: echo "second_job = ${{ steps.second_job.output }}" # Access output variables from the second job
+      - name: Print output variable - Third Job
+        run: echo "third_job = ${{ steps.third_job.output }}" # Access output variables from the third job
