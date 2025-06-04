@@ -22,6 +22,9 @@ jobs:  # Define jobs
     if: ${{ github.ref == 'refs/heads/main' }}  # Check if the branch is main
     needs: first_jobs
     runs-on: ubuntu-latest
-    steps:
-      - name: Hello World step
-        run: echo "Hello, Second World!"
+    steps: # Two ways to create actions
+      - name: Working directory
+        run: ls -sl
+
+      - name: Action
+        uses: actions/checkout@v4
