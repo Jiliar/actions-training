@@ -7,12 +7,8 @@ on: # Init event
 jobs:  # Define jobs
   first_job:
     runs-on: ubuntu-latest
-    steps: # Define steps
-      - name: Hello World step
-        run: echo "Hello, World!"
-      - name: Worning on Dir
-        run: echo "first_job = First Job!" >> $GITHUB_OUTPUT # Set an output variable
-
+    outputs:
+      first_job_output: ${{ steps.set_output.outputs.first_job }}
 
   second_job:
     needs: first_job #Create a dependency on the first job
@@ -20,7 +16,7 @@ jobs:  # Define jobs
     steps:
       - name: Hello World step
         run: echo "Hello, Second World!"
-      - name: Worning on Dir
+      - name: Working on Dir
         run: echo "second_job = Second Job!" >> $GITHUB_OUTPUT # Set an output variable
 
   third_job: # This job will not run if the condition if is false
@@ -32,7 +28,7 @@ jobs:  # Define jobs
         shell: bash # Define the shell to use
         run: ls -sl
     
-      - name: Worning on Dir
+      - name: Working on Dir
         run: echo "third_job = Third Job!" >> $GITHUB_OUTPUT # Set an output variable
 
       - name: Action
@@ -50,8 +46,8 @@ jobs:  # Define jobs
       - name: Print environment variables
         run: printenv  # Print all environment variables
       - name: Print output variable - First Job
-        run: echo "first_job = ${{ steps.first_job.output }}" # Access output variables from the first job
+        run: echo "first_job = ${{ steps.first_job.output.first_job }}" # Access output variables from the first job
       - name: Print output variable - Second Job
-        run: echo "second_job = ${{ steps.second_job.output }}" # Access output variables from the second job
+        run: echo "second_job = ${{ steps.second_job.output.second_job }}" # Access output variables from the second job
       - name: Print output variable - Third Job
-        run: echo "third_job = ${{ steps.third_job.output }}" # Access output variables from the third job
+        run: echo "third_job = ${{ steps.third_job.output.third_job }}" # Access output variables from the third job
