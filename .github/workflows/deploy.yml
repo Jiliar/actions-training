@@ -61,7 +61,7 @@ jobs:
     # Condición: solo se ejecuta si el push fue a la rama main
     if: ${{ github.ref == 'refs/heads/main' }}
     # Dependencia: necesita que first_job termine
-    needs: first_job
+    needs: second_job
     runs-on: ubuntu-latest
     
     outputs:
@@ -112,6 +112,7 @@ jobs:
     
   artifact_job:
     # Define un job para manejar artefactos
+    needs: fourth_job
     runs-on: ubuntu-latest
     steps:
       # Paso que sube un archivo como artefacto
