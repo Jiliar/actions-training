@@ -9,6 +9,10 @@ jobs:  # Define jobs
     runs-on: ubuntu-latest
     outputs:
       first_job_output: ${{ steps.set_output.outputs.first_job }}
+    steps:
+      - name: Set first job output
+        id: set_output
+        run: echo "first_job=First Job!" >> $GITHUB_OUTPUT
 
   second_job:
     needs: first_job #Create a dependency on the first job
@@ -46,8 +50,8 @@ jobs:  # Define jobs
       - name: Print environment variables
         run: printenv  # Print all environment variables
       - name: Print output variable - First Job
-        run: echo "first_job = ${{ steps.first_job.output.first_job }}" # Access output variables from the first job
+        run: echo "first_job = ${{ needs.first_job.output.first_job }}" # Access output variables from the first job
       - name: Print output variable - Second Job
-        run: echo "second_job = ${{ steps.second_job.output.second_job }}" # Access output variables from the second job
+        run: echo "second_job = ${{ needs.second_job.output.second_job }}" # Access output variables from the second job
       - name: Print output variable - Third Job
-        run: echo "third_job = ${{ steps.third_job.output.third_job }}" # Access output variables from the third job
+        run: echo "third_job = ${{ needs.third_job.output.third_job }}" # Access output variables from the third job
