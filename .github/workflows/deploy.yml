@@ -1,10 +1,10 @@
 name: Deploy to server
-on: # Init event
+on:
   push:
     branches:
       - main
 
-jobs:  # Define jobs
+jobs:
   first_job:
     runs-on: ubuntu-latest
     outputs:
@@ -12,48 +12,57 @@ jobs:  # Define jobs
     steps:
       - name: Set first job output
         id: set_output
-        run: echo "job_1=First Job!" >> $GITHUB_OUTPUT
+        run: echo "first_job=First Job!" >> $GITHUB_OUTPUT
       - name: Print output variable - First Job
-        run: echo "${{ steps.first_job.outputs.job_1 }}" # Access output variables from the first job
-
+        run: echo "${{ steps.set_output.outputs.first_job }}"
 
   second_job:
-    needs: first_job #Create a dependency on the first job
+    needs: first_job
     runs-on: ubuntu-latest
+    outputs:
+      second_job_output: ${{ steps.set_job2_output.outputs.job_2 }}
     steps:
       - name: Hello World step
         run: echo "Hello, Second World!"
       - name: Working on Dir
-        run: echo "job_2 = Second Job!" >> $GITHUB_OUTPUT # Set an output variable
+        id: set_job2_output
+        run: echo "job_2=Second Job!" >> $GITHUB_OUTPUT
       - name: Print output variable - Second Job
-        run: echo "${{ steps.second_job.outputs.job_2 }}" # Access output variables from the second job
+        run: echo "${{ steps.set_job2_output.outputs.job_2 }}"
 
-  third_job: # This job will not run if the condition if is false
-    if: ${{ github.ref == 'refs/heads/main' }}  # Check if the branch is main
+  third_job:
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: first_job
     runs-on: ubuntu-latest
-    steps: # Two ways to create actions
+    outputs:
+      third_job_output: ${{ steps.set_job3_output.outputs.job_3 }}
+    steps:
       - name: Working directory
-        shell: bash # Define the shell to use
+        shell: bash
         run: ls -sl
     
       - name: Working on Dir
-        run: echo "job_3 = Third Job!" >> $GITHUB_OUTPUT # Set an output variable
+        id: set_job3_output
+        run: echo "job_3=Third Job!" >> $GITHUB_OUTPUT
 
       - name: Action
         uses: actions/checkout@v4
-        with: #Define inputs or parameters
-            fetch-depth: 0  # Fetch all history for all branches and tags
+        with:
+            fetch-depth: 0
 
       - name: Print output variable - Third Job
-        run: echo "${{ steps.third_job.outputs.job_3 }}" # Access output variables from the third job
+        run: echo "${{ steps.set_job3_output.outputs.job_3 }}"
         
-    #Share information between jobs
   fourth_job:
-    needs: [first_job, second_job, third_job]  # Create a dependency on the first job
+    needs: [first_job, second_job, third_job]
     runs-on: ubuntu-latest
     steps:
       - name: Hello World step
         run: echo "Hello, Fourth World!"
+      - name: Print outputs from previous jobs
+        run: |
+          echo "First job output: ${{ needs.first_job.outputs.first_job_output }}"
+          echo "Second job output: ${{ needs.second_job.outputs.second_job_output }}"
+          echo "Third job output: ${{ needs.third_job.outputs.third_job_output }}"
       - name: Print environment variables
-        run: printenv  # Print all environment variables
+        run: printenv
