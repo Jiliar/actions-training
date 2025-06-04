@@ -1,68 +1,125 @@
+# Nombre del workflow que aparecerá en la pestaña Actions de GitHub
 name: Deploy to server
-on:
-  push:
-    branches:
-      - main
 
+# Define cuándo se ejecutará el workflow
+on:
+  push:  # Se activa cuando hay un push al repositorio
+    branches:
+      - main  # Solo se ejecuta cuando el push es a la rama main
+
+# Sección donde se definen todos los jobs que componen el workflow
 jobs:
+  # Primer job del workflow
   first_job:
+    # Especifica que se ejecutará en la última versión de Ubuntu
     runs-on: ubuntu-latest
+    
+    # Define las salidas (outputs) que este job producirá
     outputs:
+      # Nombre del output y su valor (tomado del paso con id 'set_output')
       first_job_output: ${{ steps.set_output.outputs.first_job }}
+    
+    # Pasos que componen este job
     steps:
-      - name: Set first job output
-        id: set_output
+      # Primer paso: Establecer un output
+      - name: Set first job output  # Nombre descriptivo del paso
+        id: set_output  # Identificador único para referenciar este paso
+        # Comando que ejecuta: establece una variable de salida
         run: echo "first_job=First Job!" >> $GITHUB_OUTPUT
+      
+      # Segundo paso: Imprimir el output
       - name: Print output variable - First Job
+        # Comando que imprime el valor del output establecido en el paso anterior
         run: echo "${{ steps.set_output.outputs.first_job }}"
 
+  # Segundo job del workflow
   second_job:
+    # Dependencia: este job espera a que first_job termine
     needs: first_job
     runs-on: ubuntu-latest
+    
+    # Outputs de este job
     outputs:
       second_job_output: ${{ steps.set_job2_output.outputs.job_2 }}
+    
     steps:
+      # Paso de ejemplo
       - name: Hello World step
         run: echo "Hello, Second World!"
+      
+      # Paso que establece un output
       - name: Working on Dir
-        id: set_job2_output
+        id: set_job2_output  # ID para referenciar este paso
         run: echo "job_2=Second Job!" >> $GITHUB_OUTPUT
+      
+      # Paso que imprime el output
       - name: Print output variable - Second Job
         run: echo "${{ steps.set_job2_output.outputs.job_2 }}"
 
+  # Tercer job del workflow
   third_job:
+    # Condición: solo se ejecuta si el push fue a la rama main
     if: ${{ github.ref == 'refs/heads/main' }}
+    # Dependencia: necesita que first_job termine
     needs: first_job
     runs-on: ubuntu-latest
+    
     outputs:
       third_job_output: ${{ steps.set_job3_output.outputs.job_3 }}
-    steps:
-      - name: Working directory
-        shell: bash
-        run: ls -sl
     
+    steps:
+      # Paso que lista archivos en el directorio actual
+      - name: Working directory
+        shell: bash  # Especifica el shell a usar
+        run: ls -sl  # Comando para listar archivos
+    
+      # Paso que establece un output
       - name: Working on Dir
         id: set_job3_output
         run: echo "job_3=Third Job!" >> $GITHUB_OUTPUT
 
+      # Paso que usa una acción oficial de GitHub para hacer checkout del código
       - name: Action
-        uses: actions/checkout@v4
-        with:
-            fetch-depth: 0
+        uses: actions/checkout@v4  # Acción para descargar el código
+        with:  # Parámetros para la acción
+            fetch-depth: 0  # Descarga todo el historial de commits
 
+      # Paso que imprime el output
       - name: Print output variable - Third Job
         run: echo "${{ steps.set_job3_output.outputs.job_3 }}"
         
+  # Cuarto job del workflow
   fourth_job:
+    # Dependencia: necesita que los tres jobs anteriores terminen
     needs: [first_job, second_job, third_job]
     runs-on: ubuntu-latest
+    
     steps:
+      # Paso de ejemplo
       - name: Hello World step
         run: echo "Hello, Fourth World!"
+      
+      # Paso que imprime los outputs de los jobs anteriores
       - name: Print outputs from previous jobs
-        run: |
+        run: |  # Bloque multi-línea
           echo "First job output: ${{ needs.first_job.outputs.first_job_output }}"
           echo "Second job output: ${{ needs.second_job.outputs.second_job_output }}"
           echo "Third job output: ${{ needs.third_job.outputs.third_job_output }}"
+      
+      # Paso que imprime todas las variables de entorno
       - name: Print environment variables
-        run: printenv
+        run: printenv  # Comando que muestra todas las variables de entorno
+    
+  artifact_job:
+    # Define un job para manejar artefactos
+    runs-on: ubuntu-latest
+    steps:
+      # Paso que sube un archivo como artefacto
+      - name: Generar artefacto
+        run: echo "Este es un archivo de ejemplo" > example.txt  # Crea un archivo de ejemplo
+      # Acción que sube el archivo generado como artefacto   
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4  # Acción para subir artefactos
+        with:
+          name: my-artifact  # Nombre del artefacto
+          path: example.txt  # Ruta del archivo a subir como artefacto
