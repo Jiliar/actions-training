@@ -139,3 +139,15 @@ jobs:
         run: ls -l  # Comando para listar los archivos descargados
       - name: Print downloaded file content
         run: cat test.log  # Muestra el contenido del archivo descargado
+
+  strategy_job:
+    # Job para manejar estrategias de ejecución
+    needs: download_artifact_job  # Necesita que fourth_job termine
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # No falla inmediatamente si un job falla
+      matrix:
+        messages: [Bootcamp, CodigoFacilito, GitHubActions]  # Define una matriz de mensajes
+    steps:
+      - name: Print Message
+        run: echo "Running on ${{ matrix.messages }}"  # Imprime el sistema operativo actual
