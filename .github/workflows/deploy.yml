@@ -117,10 +117,25 @@ jobs:
     steps:
       # Paso que sube un archivo como artefacto
       - name: Generar artefacto
-        run: echo "Este es un archivo de ejemplo" > example.txt  # Crea un archivo de ejemplo
+        run: echo "Este es un archivo de ejemplo" > test.log  # Crea un archivo de ejemplo
       # Acción que sube el archivo generado como artefacto   
       - name: Upload artifact
         uses: actions/upload-artifact@v4  # Acción para subir artefactos
         with:
           name: my-artifact  # Nombre del artefacto
-          path: example.txt  # Ruta del archivo a subir como artefacto
+          path: test.log  # Ruta del archivo a subir como artefacto
+  
+  download_artifact_job:
+    # Job para descargar el artefacto subido
+    needs: artifact_job  # Necesita que artifact_job termine
+    runs-on: ubuntu-latest
+    steps:
+      # Acción que descarga el artefacto subido en artifact_job
+      - name: Download artifact
+        uses: actions/download-artifact@v4  # Acción para descargar artefactos
+        with:
+          name: my-artifact  # Nombre del artefacto a descargar
+      - name: List downloaded files
+        run: ls -l  # Comando para listar los archivos descargados
+      - name: Print downloaded file content
+        run: cat test.log  # Muestra el contenido del archivo descargado
