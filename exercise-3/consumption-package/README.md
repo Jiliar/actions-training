@@ -1,0 +1,1 @@
+npm install @jiliar/paquete-estadistica@1.0.0
