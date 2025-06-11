@@ -5,7 +5,7 @@ name: Deploy to server
 on:
   push:  # Se activa cuando hay un push al repositorio
     branches:
-      - main  # Solo se ejecuta cuando el push es a la rama main
+      - main-exercise-2  # Solo se ejecuta cuando el push es a la rama main
 
 # Sección donde se definen todos los jobs que componen el workflow
 jobs:
